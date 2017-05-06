@@ -9,8 +9,9 @@
   <div class="nav-wrapper container"><a id="logo-container" href="{{ url('/') }}" class="brand-logo">Online Quiz</a>
     <ul class="right hide-on-med-and-down">
       <li><a href="{{ url('/') }}">Home</a></li>
-      <li><a href="{{url('/quiz-list')}}">Quiz List</a></li>
-      <li><a href="{{url('/result-students')}}">Your Result</a></li>
+      <li><a href="{{url('/quiz-list')}}">Account Management</a></li>
+      <li><a href="{{url('/result-students')}}">Quiz Management</a></li>
+      <li><a href="{{url('/result-students')}}">Result Management</a></li>
       <!-- Dropdown Trigger -->
       <li><a class="dropdown-button" href="#!" data-activates="dropdown1"> <i class="medium material-icons">perm_identity</i></a></li>
     </ul>

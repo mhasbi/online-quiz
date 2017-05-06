@@ -14,12 +14,18 @@
 Route::get('/', function () {
     return view('index');
 });
-Route::get('quiz-list', function () {
-    return view('quiz-list');
-});
 Route::get('welcome', function () {
     return view('welcome');
 });
 Route::get('questions', function(){
     return view('questions');
 });
+Route:get('result-students', function(){
+    return view('result-students');
+});
+
+//About Questions
+Route::get('quiz-list','QuestionController@getAllListQuestions');
+Route::get('questions','QuestionController@getAllQuestions');
+Route::get('login','AuthController@login_page');
+Route::post('postLogin', 'AuthController@login');

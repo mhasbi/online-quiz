@@ -47,75 +47,27 @@
         </div>
         <br>
       </div><!--  /.row  -->
+      <?php $i = 0; $j = 0;?>
+      @foreach($questions as $question)
       <div class="collection with-header">
-        <div class="collection-header"><h5>1. Termasuk kelas apakah hewan Gallus gallus?</h5></div>
+        <div class="collection-header"><h5>{{($i+1). ". ". $question->question}}</h5></div>
         <div class="collection-item">
           <form action="#">
+           <?php
+                $thisOptions = $options->where('id_question', $question->id);
+            ?>
+           @foreach($thisOptions as $thisOption)
            <p>
-             <input name="group1" type="radio" id="test1" />
-             <label for="test1">A. Mamalia</label>
+             <input name="group{{$i}}" type="radio" id="test{{$j}}" />
+             <label for="test{{$j}}">{{$thisOption->statement}}</label>
            </p>
-           <p>
-             <input name="group1" type="radio" id="test2" />
-             <label for="test2">B. Mollusca</label>
-           </p>
-           <p>
-             <input class="with-gap" name="group1" type="radio" id="test3"  />
-             <label for="test3">C. Aves</label>
-           </p>
-           <p>
-             <input class="with-gap" name="group1" type="radio" id="test4"  />
-             <label for="test4">D. Arthropoda</label>
-           </p>
+           <?php $j++; ?>
+           @endforeach
          </form>
         </div>
       </div>
-      <div class="collection with-header">
-        <div class="collection-header"><h5>2. Termasuk kelas apakah hewan Rhinoceros Sundaicus?</h5></div>
-        <div class="collection-item">
-          <form action="#">
-           <p>
-             <input name="group3" type="radio" id="test9" />
-             <label for="test9">A. Mamalia</label>
-           </p>
-           <p>
-             <input name="group3" type="radio" id="test10" />
-             <label for="test10">B. Mollusca</label>
-           </p>
-           <p>
-             <input class="with-gap" name="group3" type="radio" id="test11"  />
-             <label for="test11">C. Aves</label>
-           </p>
-           <p>
-             <input class="with-gap" name="group3" type="radio" id="test12"  />
-             <label for="test12">D. Arthropoda</label>
-           </p>
-         </form>
-        </div>
-        <div class="collection with-header">
-          <div class="collection-header"><h5>3. Termasuk kelas apakah hewan Panthera Tigris?</h5></div>
-          <div class="collection-item">
-            <form action="#">
-             <p>
-               <input class="with-gap" name="group2" type="radio" id="test5" />
-               <label for="test5">A. Mamalia</label>
-             </p>
-             <p>
-               <input class="with-gap" name="group2" type="radio" id="test6" />
-               <label for="test6">B. Mollusca</label>
-             </p>
-             <p>
-               <input class="with-gap" name="group2" type="radio" id="test7"  />
-               <label for="test7">C. Aves</label>
-             </p>
-             <p>
-               <input class="with-gap" name="group2" type="radio" id="test8"  />
-               <label for="test8">D. Arthropoda</label>
-             </p>
-           </form>
-          </div>
-      </div>
-
+      <?php $i++; ?>
+      @endforeach
       </div>
     </div><!--  /.container  -->
   </div><!-- /.section -->

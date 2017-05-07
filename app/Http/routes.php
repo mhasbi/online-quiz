@@ -27,5 +27,7 @@ Route:get('result-students', function(){
 //About Questions
 Route::get('quiz-list','QuestionController@getAllListQuestions');
 Route::get('questions','QuestionController@getAllQuestions');
+Route::post('post_answer','AnswerController@postQuestionAnswers');
+
 Route::get('login','AuthController@login_page');
 Route::post('postLogin', 'AuthController@login');

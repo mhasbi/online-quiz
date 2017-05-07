@@ -48,26 +48,33 @@
         <br>
       </div><!--  /.row  -->
       <?php $i = 0; $j = 0;?>
-      @foreach($questions as $question)
-      <div class="collection with-header">
-        <div class="collection-header"><h5>{{($i+1). ". ". $question->question}}</h5></div>
-        <div class="collection-item">
-          <form action="#">
-           <?php
-                $thisOptions = $options->where('id_question', $question->id);
-            ?>
-           @foreach($thisOptions as $thisOption)
-           <p>
-             <input name="group{{$i}}" type="radio" id="test{{$j}}" />
-             <label for="test{{$j}}">{{$thisOption->statement}}</label>
-           </p>
-           <?php $j++; ?>
-           @endforeach
-         </form>
+      <form action="{{url('post_answer')}}" method="POST">
+        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+        @foreach($questions as $question)
+        <div class="collection with-header">
+          <input type="hidden" name="questionsIDList[]" value="{{$question->id}}">
+          <div class="collection-header"><h5>{{($i+1). ". ". $question->question}}</h5></div>
+          <div class="collection-item">
+             <?php
+                  $thisOptions = $options->where('id_question', $question->id);
+                  $k = 0;
+              ?>
+             @foreach($thisOptions as $thisOption)
+             <?php $k++; ?>
+             <p>
+               <input name="answersList[{{$i}}]" type="radio" id="test{{$j}}" value="{{$k}}" />
+               <label for="test{{$j}}">{{$thisOption->statement}}</label>
+             </p>
+             <?php $j++; ?>
+             @endforeach
+          </div>
         </div>
-      </div>
-      <?php $i++; ?>
-      @endforeach
+        <?php $i++; ?>
+        @endforeach
+        <div class="col s10 offset-s1 center-align">
+          <button class="waves-effect waves-light red lighten-1 btn" type="submit" value="Submit">Submit</button>
+        </div>
+      </form>
       </div>
     </div><!--  /.container  -->
   </div><!-- /.section -->

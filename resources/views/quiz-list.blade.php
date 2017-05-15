@@ -26,7 +26,7 @@
               <p>{{$question->description}}</p>
             </div>
             <div class="card-action">
-              <a href="{{url('questions')}}" class="waves-effect waves-light red lighten-2 white-text btn">Take Quiz</a>
+              <a href="{{url('questions-list/'.$question->id)}}" class="waves-effect waves-light red lighten-2 white-text btn">Take Quiz</a>
             </div>
           </div>
         </div><!-- /col -->

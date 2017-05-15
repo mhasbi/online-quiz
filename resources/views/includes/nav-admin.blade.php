@@ -1,18 +1,21 @@
 <!-- Dropdown Structure -->
 <ul id="dropdown1" class="dropdown-content">
   <li><a href="#!"></a></li>
-  <li><a href="#!">Profile</a></li>
+  <li><a href="{{url('/my-profile')}}">Profile</a></li>
   <li class="divider"></li>
-  <li><a href="#!">logout</a></li>
+  <li><a href="{{url('/logout')}}">Logout</a></li>
+</ul>
+<ul id="dropdown2" class="dropdown-content">
+  <li><a href="#!"></a></li>
+  <li><a href="{{url('/admin/students-result')}}">By Students</a></li>
+  <li class="divider"></li>
+  <li><a href="{{url('/admin/question-result')}}">By Questions</a></li>
 </ul>
 <nav class="red lighten-2" role="navigation">
   <div class="nav-wrapper container"><a id="logo-container" href="{{ url('/') }}" class="brand-logo">Online Quiz</a>
     <ul class="right hide-on-med-and-down">
       <li><a href="{{ url('/') }}">Home</a></li>
-      <li><a href="{{url('/quiz-list')}}">Account Management</a></li>
-      <li><a href="{{url('/result-students')}}">Quiz Management</a></li>
-      <li><a href="{{url('/result-students')}}">Result Management</a></li>
-      <!-- Dropdown Trigger -->
+      <li><a href="{{url('/admin/questions-management')}}">Questions Management</a></li>
       <li><a class="dropdown-button" href="#!" data-activates="dropdown1"> <i class="medium material-icons">perm_identity</i></a></li>
     </ul>
     <ul id="nav-mobile" class="side-nav">

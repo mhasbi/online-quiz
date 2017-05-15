@@ -3,83 +3,29 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\User;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    public function index()
-    {
-        //
+  public function getUsersList(){
+    $usersList = User::get();
+    return view('admin-view.users-management')->with('users',$usersList);
+  }
+  public function changeRole($role_id, $user_id){
+    $user = User::where('id',$user_id)->first();
+    $user->role = $role_id;
+    $user->save();
+    $usersList = User::get();
+    $notification['message'] = "You have been changed user ".$user->email."'s role to ";
+    if($role_id == 0){
+      $notification['message'] = $notification['message']."student.";
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
+    else{
+      $notification['message'] = $notification['message']."admin.";
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
-    public function store()
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function update($id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+    $notification['condition'] ="Success";
+    return view('admin-view.users-management')->with('users',$usersList)->with('notification', $notification);
+  }
 }

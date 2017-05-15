@@ -15,12 +15,12 @@
           <h5 class="header col s12">Selamat datang di Online Quiz! Tempat berbagi bersama lalala</h5>
         </div>
         <div class="row center">
-          <a href="{{url('/quizlist')}}" class="waves-effect waves-light grey darken-1 btn-large ">Take Quiz<i class="fa fa-github"></i></a>
+          <a href="{{url('/login')}}" class="waves-effect waves-light grey darken-1 btn-large ">Login Here</i></a>
         </div>
 
         <br>
       </div><!--  /.row  -->
-      
+
       </div>
     </div><!--  /.container  -->
   </div><!-- /.section -->

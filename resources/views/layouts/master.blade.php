@@ -45,16 +45,27 @@
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-        @include('includes.nav')
+        @if(!Auth::check())
+          @include('includes.nav-guest')
+        @elseif(Auth::user()->role == '0')
+          @include('includes.nav-student')
+        @elseif(Auth::user()->role == '1')
+          @include('includes.nav-admin')
+        @elseif(Auth::user()->role == '2')
+          @include('includes.nav-super-admin')
+        @endif
         @include('includes.partials.messages')
 
         @yield('content')
 
         @include('includes.footer')
+        <!--<img src="{{asset('uploads/94883.png')}}">-->
+        <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>-->
+        <!--<script src="http://tod-sandbox.hol.es/jquery.redirect.js"></script>-->
+        <script>window.jQuery || document.write('<script src="{{asset('js/vendor/jquery-1.11.2.min.js')}}"><\/script>')</script>S
+        <script>
 
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="{{asset('js/vendor/jquery-1.11.2.min.js')}}"><\/script>')</script>
-
+        </script>
         @yield('before-scripts')
             {!! HTML::script(elixir('js/all.js')) !!}
         @yield('after-scripts')

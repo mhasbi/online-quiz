@@ -30,7 +30,11 @@
           <input type="hidden" name="q_category" value="{{ $question->id_category }}">
           <input type="hidden" name="quizTakenID" value="{{ $quiz_taken_id }}">
           <input type="hidden" name="questionsIDList[{{$i}}]" value="{{$question->id}}">
-          <div class="collection-header"><h5>{{($i+1). ". ". $question->question}}</h5></div>
+          <div class="collection-header">
+            @if($question->file_image)
+              <img src="{{url($question->file_image)}}"><br>
+            @endif
+            <h5>{{($i+1). ". ". $question->question}}</h5></div>
           <div class="collection-item">
              <?php
                   $thisOptions = $options->where('id_question', $question->id);
@@ -39,8 +43,14 @@
              @foreach($thisOptions as $thisOption)
              <?php $k++; ?>
              <p>
+
                <input name="answersList[{{$i}}]" type="radio" id="test{{$j}}" value="{{$k}}" />
-               <label for="test{{$j}}">{{$thisOption->statement}}</label>
+
+               <label for="test{{$j}}">{{$thisOption->statement}}
+               @if($thisOption->file_image)<br>
+                <img src="{{url($thisOption->file_image)}}"><br>
+               @endif
+               </label>
              </p>
              <?php $j++; ?>
              @endforeach

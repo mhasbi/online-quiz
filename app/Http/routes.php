@@ -14,6 +14,9 @@ use App\Http\Requests;
 use Illuminate\Http\Request;
 
 Route::get('/', function () {
+    if(Auth::check() && Auth::user()->role === 1){
+      return redirect('admin/question-management');
+    }
     return view('index');
 });
 Route::group(['middleware' => 'auth'], function(){
@@ -28,11 +31,10 @@ Route::post('apply/upload', 'ApplyController@upload');
 Route::group(['middeware' => 'guest'], function(){
   Route::get('login', 'GuestController@getLogin');
   Route::get('register', 'GuestController@getRegister');
-  Route::get('/','GuestController@getHome');
   Route::get('/home','GuestController@getHome');
 });
 Route::group(['middleware' => 'admin'], function(){
-  Route::get('admin/questions-management','QuestionController@getQuestionsCategoryList');
+  /**Route::get('admin/questions-management','QuestionController@getQuestionsCategoryList');
   Route::get('admin/questions-management/detail/{id_question}','QuestionController@getQuestionsCategoryDetail');
   Route::get('admin/questions-management/edit-questions/','QuestionController@getQuestionsDetail');
   Route::get('admin/add-question-group','QuestionController@getCreateQuestionGroup');
@@ -47,16 +49,28 @@ Route::group(['middleware' => 'admin'], function(){
   Route::post('admin/post/create-question','QuestionController@postCreateQuestions');
   Route::post('admin/post/edit-question-group', 'QuestionController@postQuestionsCategoryEditDetail');
   Route::post('admin/post/edit-questions', 'QuestionController@postQuestionsEditDetail');
-
-});
+  **/
   Route::get('admin/user-management','UserController@getUsersList');
   Route::get('admin/user-management/change-role/{role_id}/{user_id}','UserController@changeRole');
   Route::get('admin/question-management','QuestionController@getQuestionCategory');
   Route::get('admin/question-management/detail/{id_question}','QuestionController@getQuestion');
+  Route::get('admin/question-management/add-group-question', 'QuestionController@addQuestionGroup');
+  Route::get('admin/result/by-question', 'ResultController@getResultByQuestion');
+  Route::get('admin/dashboard','ResultController@getDashboard');
+  Route::get('admin/question-management/delete/{q_id}', 'QuestionController@getDeleteQuestion');
+  Route::post('admin/post/add-group-question','QuestionController@postQuestionGroup');
+  Route::post('admin/post/add-questions','QuestionController@postQuestions');
   Route::post('admin/post/edit-group-question','QuestionController@postEditQuestion');
   Route::post('admin/post/edit-questions','QuestionController@postEditQuestions');
+});
+
+
+
 Route::group(['middleware' => 'student'], function(){
-  Route::get('questions-group-list','QuestionController@getQuestionGroupsList');
+  Route::get('question-list/{id}','QuestionController@getQuestionGroupsList');
+  Route::get('question-category', function(){
+    return view('quiz-category');
+  });
   Route::get('questions-list/{group_id}', 'QuestionController@getQuestions');
   Route::get('my-result','ResultController@getResult');
 
@@ -90,13 +104,17 @@ Route::get('testing2',function(){
   return view('layouts.master-student');
 });
 Route::get('register',function(){
-  return view('register');
+  if(!Auth::check())
+    return view('register');
+  return redirect('/');
 });
 
 Route::post('reguser','Auth\AuthController@create');
 
 Route::get('login',function(){
-  return view('login');
+  if(!Auth::check())
+    return view('login');
+  return redirect('/');
 });
 Route::post('postlogin', 'Auth\AuthController@postLogin');
 Route::get('cek_login', function(){

@@ -10,6 +10,7 @@ use App\Question;
 use App\Option;
 use App\QuizTaken;
 use App\Answer;
+use App\User;
 use Auth;
 use App\QuestionCategory;
 use App\Http\Requests;
@@ -19,33 +20,41 @@ class QuestionController extends Controller
 {
     public function apiGetQuestionDetail($q_id, $user_id){
     }
-    public function getQuestionGroupsList(){
-      $questionsList = QuestionCategory::get();
-      return view('quiz-list')->with('questionsList', $questionsList);
-    }
-    public function getQuestionCategory(){
+    public function getDeleteQuestion($q_id){
+      $questionCategory = QuestionCategory::where('id',$q_id)->first();
+      $questions = Question::where('id_category',$questionCategory->id)->get();
+      $questionCategory->delete();
+      foreach($questions as $question){
+        $question->delete();
+      }
+      $notification['message'] = "You have deleted a Question List ";
+      $notification['condition'] ="Success";
       $questionList = QuestionCategory::get();
-      return view('admin-view.question-management')->with('questionList', $questionList);
+      return view('admin-view.question-management')->with('questionList', $questionList)->with('notification', $notification);
     }
-    public function getQuestion($question_id){
-      $question = QuestionCategory::where('id',$question_id)->first();
-      $q = Question::where('id_category',$question->id)->first();
-      $number = count($q);
-      return view('admin-view.edit-question-group')->with('question',$question)->with('number',$number);
+    public function getQuestionGroupsList($id){
+      $question_categories = QuestionCategory::where('q_group',$id)->get();
+
+      $questions = Question::get();
+      $user = User::where('id',Auth::id())->first();
+      $user->choosen_quiz = $id;
+      $user->save();
+      return view('quiz-list')->with('questionsList', $question_categories);
     }
-    public function postEditQuestion(Request $request){
-      //return $request->all();
-      $question_group = QuestionCategory::where('id', $request->input('id'))->first();
-      $question_group->duration = $request->input('duration');
-      $question_group->name = $request->input('name');
-      $question_group->description = $request->input('description');
-      $question_group->q_group = $request->input('group');
-      $question_group->save();
-      $questions = Question::where('id_category', $question_group->id)->get();
-      $options = Option::get();
-      return view('admin-view.edit-questions')->with('question_group',$question_group)->with('number', $request->input('number'))->with('options',$options);
+    public function addQuestionGroup(){
+        return view('admin-view.add-question-group');
     }
-    public function postEditQuestions(Request $request){
+    public function postQuestionGroup(Request $request){
+        $newQuestionGroup = new QuestionCategory;
+        $newQuestionGroup->name = $request->input('name');
+        $newQuestionGroup->description = $request->input('description');
+        $newQuestionGroup->duration = $request->input('duration');
+        $newQuestionGroup->q_group = $request->input('group');
+        if($newQuestionGroup->save()){
+          return view('admin-view.add-questions')->with('question_group', $newQuestionGroup)->with('number',$request->input('number'));
+        }
+    }
+    public function postQuestions(Request $request){
       $image_path = "uploads";
       $i = 0;
       foreach($request->input('question') as $question){
@@ -56,7 +65,7 @@ class QuestionController extends Controller
         $file = $request->file('q_image')[$i];
         if($file){
           $file->move($image_path, $date.".".$file->getClientOriginalExtension());
-          $newQuestion->file_image = $image_path."/".$date.$file->getClientOriginalExtension();
+          $newQuestion->file_image = $image_path."/".$date.".".$file->getClientOriginalExtension();
         }
         $newQuestion->id_category = $request->input('id');
         $newQuestion->save();
@@ -69,19 +78,91 @@ class QuestionController extends Controller
           $date = date('Y-m-d-h-i-s').$i.$j;
           if($file){
             $file->move($image_path, $date.".".$file->getClientOriginalExtension());
-            $newOption->file_image = $image_path."/".$date.$file->getClientOriginalExtension();
+            $newOption->file_image = $image_path."/".$date.".".$file->getClientOriginalExtension();
           }
           $newOption->save();
         }
       }
-      return "sukses";
+      $questionList = QuestionCategory::get();
+
+      $notification['message'] = "You have added a new Question List ";
+
+      $notification['condition'] ="Success";
+      return view('admin-view.question-management')->with('questionList', $questionList)->with('notification', $notification);
+    }
+    public function getQuestionCategory(){
+      $questionList = QuestionCategory::get();
+      return view('admin-view.question-management')->with('questionList', $questionList);
+    }
+    public function getQuestion($question_id){
+      $question = QuestionCategory::where('id',$question_id)->first();
+      $q = Question::where('id_category',$question->id)->get();
+      $number = count($q);
+      return view('admin-view.edit-question-group')->with('id_category',$question_id)->with('question',$question)->with('number',$number);
+    }
+    public function postEditQuestion(Request $request){
+      //return $request->all();
+      $question_group = QuestionCategory::where('id', $request->input('id'))->first();
+      $question_group->duration = $request->input('duration');
+      $question_group->name = $request->input('name');
+      $question_group->description = $request->input('description');
+      $question_group->q_group = $request->input('group');
+      $question_group->save();
+      $questions = Question::where('id_category', $question_group->id)->get();
+      $options = Option::get();
+      return view('admin-view.edit-questions')->with('questions', $questions)->with('question_group',$question_group)->with('number', $request->input('number'))->with('options',$options);
+    }
+    public function postEditQuestions(Request $request){
+      $image_path = "uploads";
+      $i = 0;
+      foreach($request->input('question') as $question){
+        if(isset($request->input('q_id')[$i])){
+          $newQuestion = Question::where('id', $request->input('q_id')[$i])->first();
+        }
+        else{
+          $newQuestion = new Question;
+        }
+        $newQuestion->question = $question;
+        $newQuestion->correct_answer = $request->input('correct_answer')[$i];
+        $date = date('Y-m-d-h-i-s').$i;
+        $file = $request->file('q_image')[$i];
+        if($file){
+          $file->move($image_path, $date.".".$file->getClientOriginalExtension());
+          $newQuestion->file_image = $image_path."/".$date.".".$file->getClientOriginalExtension();
+        }
+        $newQuestion->id_category = $request->input('id');
+        $newQuestion->save();
+        for($j=1;$j<6;$j++){
+          if(isset($request->input('opt_id')[$i*5+$j]))
+            $newOption = Option::where('id',$request->input('opt_id')[$i*5+$j])->first();
+          else
+          $newOption = new Option;
+          $newOption->statement = $request->input('option')[$i*5+$j];
+          $newOption->id_question = $newQuestion->id;
+
+          $file = $request->file('opt_image')[$i*5+$j];
+          $date = date('Y-m-d-h-i-s').$i.$j;
+          if($file){
+            $file->move($image_path, $date.".".$file->getClientOriginalExtension());
+            $newOption->file_image = $image_path."/".$date.".".$file->getClientOriginalExtension();
+          }
+          $newOption->save();
+        }
+        $i++;
+      }
+      $notification['message'] = "You have edited a Question List ";
+      $notification['condition'] ="Success";
+      $questionList = QuestionCategory::get();
+      return view('admin-view.question-management')->with('questionList', $questionList)->with('notification', $notification);
     }
     public function getQuestions($quiz_id){
       $date = date('Y-m-d h:i:s');
       $question = QuestionCategory::where('id',$quiz_id)->first();
       $duration = $question->duration;
       $due_date = strtotime($date . " + ".$question->duration." minutes");
-      $new_quiz_taken = new QuizTaken;
+      $new_quiz_taken = QuizTaken::where('id_question_category',$quiz_id)->where('id_user',Auth::user()->id)->first();
+      if(!$new_quiz_taken)
+        $new_quiz_taken = new QuizTaken;
       $new_quiz_taken->id_user = Auth::id();
       $new_quiz_taken->id_question_category = $quiz_id;
       $new_quiz_taken->time_started = $date;
@@ -95,8 +176,14 @@ class QuestionController extends Controller
       $new_quiz_taken = QuizTaken::where('id', $request->input('quizTakenID'))->first();
       $itr = 0;
       $questions = $request->input('questionsIDList');
-      foreach($questions as $question){
+      $old_answers = Answer::where('id_quiz_taken',$request->input('quizTakenID'))->get();
+      if($old_answers){
+        foreach($old_answers as $old_answer){
+          $old_answer->delete();
+        }
+      }
 
+      foreach($questions as $question){
         $new_answer = new Answer;
         $new_answer->id_quiz_taken = $new_quiz_taken->id;
         $new_answer->id_question = $question;

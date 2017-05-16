@@ -51,6 +51,9 @@ class AuthController extends Controller
     protected function postLogin(Request $data){
       if(\Auth::attempt(['email' => $data->input('email'), 'password' => $data->input('password')]))
         return redirect()->intended('/');
+      else {
+        return view('notification')->with('message','Fail!')->with('condition','Your account and password do not match')->with('link','');
+      }
     }
     /**
      * Create a new user instance after a valid registration.
